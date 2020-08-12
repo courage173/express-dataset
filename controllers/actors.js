@@ -1,37 +1,22 @@
-var db = require('../models/dbConnection');
+const db = require('../models/dbConnection');
+const actorQuery = require('../models/actor')
 
-var getAllActors = (req, res) => {
+const getAllActors = (req, res) => {
 	try {
-		db.find({}, { _id: 0, type: 0, repo: 0, created_at: 0, id: 0 })
-			.exec((err, doc) => {
-				let result = []
-				//console.log(doc[0])
-				doc.forEach((actor) => {
-					result.push(actor.actor)
-				})
-				let d = []
-				result.forEach((k) => {
-					if (d.length < 1) {
-						k.count = 1
-						d.push(k)
-					} else {
-						d.forEach((l) => {
-							if (l.id === k.id) {
-								l.count += 1
-							} else {
-								d.push(k)
-							}
-						})
-					}
-				})
-				console.log(d)
+		db.all(actorQuery.getAllActors, (err, actors) => {
+			if (err) {
+				return res.status(400).json({ message: err.message });
+			}
 
-				db.count({ "actor.id": { $in: result } }, (_, doc) => {
-					console.log(doc + 'kola')
-				})
-				//console.log(result)
-				return res.send(result)
+			const obj = actors.map((actor) => {
+				return {
+					id: actor.id,
+					login: actor.login,
+					avatar_url: actor.avatar_url,
+				}
 			})
+			return res.status(200).json(obj)
+		})
 			;
 	} catch (err) {
 		return res.status(401).send(err.message)
@@ -39,12 +24,42 @@ var getAllActors = (req, res) => {
 
 };
 
-var updateActor = () => {
-
+const updateActor = (req, res) => {
+	try {
+		const { id, avatar_url } = req.body
+		db.run(actorQuery.updateActor, [avatar_url, id], (err) => {
+			if (err) {
+				return res.status(404).json({ message: err.message });
+			}
+			return res.status(200).json({ message: 'updated!!' })
+		})
+			;
+	} catch (err) {
+		return res.status(401).send(err.message)
+	}
 };
 
-var getStreak = () => {
+const getStreak = (req, res) => {
+	try {
+		db.all(actorQuery.getActorsStreak, (err, actors) => {
+			if (err) {
+				return res.status(400).json({ message: err.message });
+			}
 
+			const obj = actors.map((actor) => {
+				return {
+					id: actor.iD,
+					login: actor.login,
+					avatar_url: actor.avatar_url,
+
+				}
+			})
+			return res.status(200).json(obj)
+		})
+			;
+	} catch (err) {
+		return res.status(401).send(err.message)
+	}
 };
 
 

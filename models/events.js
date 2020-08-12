@@ -4,7 +4,7 @@ const createEventTable = `
     type TEXT NOT NULL,
     actor_id INTEGER NOT NULL,
     repo_id INTEGER NOT NULL,
-    created_at TEXT NOT NULL,
+    created_at date NOT NULL,
     FOREIGN KEY (actor_id) REFERENCES actors (iD),
     FOREIGN KEY (repo_id) REFERENCES repos (repo_id)
   )

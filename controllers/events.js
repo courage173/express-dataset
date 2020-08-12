@@ -7,7 +7,7 @@ const getAllEvents = (req, res) => {
 	try {
 		db.all(eventQuery.getAllEvents, (err, events) => {
 			if (err) {
-				return res.status(400).json({ error: err.message });
+				return res.status(400).json({ message: err.message });
 			}
 			const obj = events.map((res) => {
 				return {
@@ -98,7 +98,7 @@ const getByActor = (req, res) => {
 		const { actorID } = req.params
 		db.all(eventQuery.getEventByActorId, [Number(actorID)], (err, events) => {
 			if (err) {
-				return res.status(400).json({ error: err.message });
+				return res.status(400).json({ message: err.message });
 			}
 
 			const obj = events.map((res) => {
@@ -129,7 +129,6 @@ const getByActor = (req, res) => {
 
 var eraseEvents = (req, res) => {
 	try {
-		console.log('yeahh')
 		db.run(eventQuery.eraseEvents, (err) => {
 			if (err) {
 				res.status(400).json({ message: err.message });
@@ -137,7 +136,6 @@ var eraseEvents = (req, res) => {
 			res.status(200).json({ message: 'deleted successfully' });
 		});
 	} catch (err) {
-
 		return res.status(401).send(err)
 	}
 };
